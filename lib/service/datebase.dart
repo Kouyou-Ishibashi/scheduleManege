@@ -7,10 +7,9 @@ import 'package:path_provider/path_provider.dart'; //追加
 
 part 'datebase.g.dart';
 
-//イベントテーブル
+//イベントテーブル定義
 class Event extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get userId => text()();
   DateTimeColumn get scheduleDate => dateTime()();
   DateTimeColumn get startTime => dateTime().nullable()();
   DateTimeColumn get endTime => dateTime().nullable()();
@@ -28,52 +27,20 @@ class MyDatabase extends _$MyDatabase {
   int get schemaVersion => 1;
   final now = DateTime.now();
 
-  Stream<List<EventData>> watchEntries() {
-    return (select(event)).watch();
-  }
+  // 全件取得
+  Future<List<EventData>> readAllEventData() => select(event).get();
 
-  Future<int> addEvent(
-    DateTime scheduleDate,
-    DateTime startTime,
-    DateTime endTime,
-    String eventFlg,
-    String scheduleMemo,
-  ) {
-    return into(event).insert(EventCompanion(
-      userId: const Value('TEXT'),
-      scheduleDate: Value(scheduleDate),
-      startTime: Value(startTime),
-      endTime: Value(endTime),
-      eventFlg: Value(eventFlg),
-      scheduleMemo: Value(scheduleMemo),
-      createDate: Value(now),
-      editDate: Value(now),
-    ));
-  }
+  //追加
+  Future addEvent(EventData data) => into(event).insert(data);
 
-  // イベント更新
-  Future<int> updateTodo(
-    EventData eventdate,
-    DateTime startTime,
-    DateTime endTime,
-    String eventFlg,
-    String scheduleMemo,
-  ) {
-    return (update(event)..where((tbl) => tbl.id.equals(eventdate.id))).write(
-      EventCompanion(
-        startTime: Value(startTime),
-        endTime: Value(endTime),
-        eventFlg: Value(eventFlg),
-        scheduleMemo: Value(scheduleMemo),
-        editDate: Value(now),
-      ),
-    );
-  }
+  //更新
+  Future updateEvent(EventData data) => update(event).replace(data);
 
-  //イベント削除処理
-  Future<void> deleteTodo(int id) {
-    return (delete(event)..where((tbl) => tbl.id.equals(id))).go();
-  }
+  //削除
+  Future deleteEvent(int id) =>
+      (delete(event)..where((it) => it.id.equals(id))).go();
+
+  static getInstance() {}
 }
 
 LazyDatabase _openConnection() {

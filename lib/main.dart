@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_task8/service/datebase.dart';
 import 'package:flutter_task8/view/calendar.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -6,7 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 void main() {
   initializeDateFormatting("ja_JP");
   final database = MyDatabase();
-  runApp(MyApp(database: database)); //変更
+  runApp(ProviderScope(child: MyApp(database: database))); //変更
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   _MyHomePageState({
-    required this.database, //追加
+    required this.database,
   });
   final MyDatabase database;
   @override
@@ -56,53 +57,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             TextButton(
               onPressed: () {
-                // （1） 指定した画面に遷移する
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        // （2） 実際に表示するページ(ウィジェット)を指定する
-                        builder: (context) => const Schedule(
-                              title: 'カレンダー',
-                            )));
-              },
-              child: const Text('カレンダー'),
-            ),
-            TextButton(
-              onPressed: () {
-                // （1） 指定した画面に遷移する
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        // （2） 実際に表示するページ(ウィジェット)を指定する
-                        builder: (context) => const Schedule(
-                              title: 'カレンダー',
-                            )));
-              },
-              child: const Text('カレンダー'),
-            ),
-            TextButton(
-              onPressed: () {
-                // （1） 指定した画面に遷移する
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        // （2） 実際に表示するページ(ウィジェット)を指定する
-                        builder: (context) => const Schedule(
-                              title: 'カレンダー',
-                            )));
-              },
-              child: const Text('カレンダー'),
-            ),
-            TextButton(
-              onPressed: () {
-                // （1） 指定した画面に遷移する
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        // （2） 実際に表示するページ(ウィジェット)を指定する
-                        builder: (context) => const Schedule(
-                              title: 'カレンダー',
-                            )));
+                        builder: (context) =>
+                            ProviderScope(child: Schedule())));
               },
               child: const Text('カレンダー'),
             ),

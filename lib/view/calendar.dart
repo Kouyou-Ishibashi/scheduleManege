@@ -1,122 +1,62 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_task8/common/common.dart';
+import 'package:flutter_task8/model/event_provider.dart';
 import 'package:flutter_task8/view/event.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'dart:collection';
 
-class Schedule extends StatefulWidget {
-  const Schedule({Key? key, required this.title}) : super(key: key);
+//①EventStateNotifierを呼び出す。
+final EventStateNotifierProvider =
+    StateNotifierProvider((ref) => EventStateNotifier());
+//②SelectNotifierProviderを呼び出す。
+final SelectNotifierProvider =
+    ChangeNotifierProvider.autoDispose((ref) => SelectCalendar());
 
-  final String title;
+class Schedule extends ConsumerWidget {
+  // ③変数定義(更新なし)
+  final DateTime getDate = DateTime.now(); // システム日付
+  final String day1 = '日';
+  final String day2 = '土';
 
-  @override
-  State<Schedule> createState() => _ScheduleState();
-}
-
-class _ScheduleState extends State<Schedule> {
-  Map<DateTime, List> _eventsList = {};
-
-// 変数定義
-  final DateTime _startDate = DateTime(DateTime.now().year - 2);
-  final DateTime _endDate = DateTime(DateTime.now().year + 2);
-  DateTime? selectedDate = DateTime.now();
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focused = DateTime.now(); // 最初に選択される日
-  DateTime _selected = DateTime.now(); // 選択日
-  String day1 = '日';
-  String day2 = '土';
-  DateTime getDate = DateTime.now();
-  DateTime scheduleDate = DateTime.now();
-
-  late DateTime selectedDates = DateTime.now();
+// ③変数定義(更新あり)
+  late DateTime selectedDate = getDate; // 月ピッカーで選択した日付格納用変数
+  late DateTime focused = getDate; // 最初に選択される日
+  late DateTime selected = getDate; // 選択日
   late DateTime lastDateThisMonth =
-      DateTime(selectedDates.year, selectedDates.month + 1, 1)
-          .subtract(const Duration(days: 1));
+      DateTime(selectedDate.year, selectedDate.month + 1, 1)
+          .subtract(const Duration(days: 1)); // 対象月の1日を抽出
   late DateTime firstDateThisMonth =
-      DateTime(selectedDates.year, selectedDates.month, 1);
+      DateTime(selectedDate.year, selectedDate.month, 1); // 対象月に月末日を抽出
   late List<DateTime> targetMonthDateList = List<DateTime>.generate(
-      lastDateThisMonth.day, (i) => firstDateThisMonth.add(Duration(days: i)));
+      lastDateThisMonth.day,
+      (i) => firstDateThisMonth.add(Duration(days: i))); // 対象月の日付をリストに格納
 
-// 月ピッカー設定
-  Future _pickDate(BuildContext context) async {
-    final initialDate = DateTime.now();
-    final newDate = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: _startDate,
-        lastDate: _endDate);
+  Schedule({Key? key}) : super(key: key);
 
-    //nullチェック
-    if (newDate != null) {
-      setState(() {
-        _selected = newDate;
-        _focused = newDate;
-        selectedDate = newDate;
-      });
-    } else {
-      return null;
-    }
-  }
-
-  // イベント設定①
+  // ④イベント設定①
   int getHashCode(DateTime key) {
     return key.day * 1000000 + key.month * 10000 + key.year;
   }
 
   @override
-  // イベント設定②※修正必要
-  void initState() {
-    super.initState();
-
-    _selected = _focused;
-    _eventsList = {
-      DateTime.now().subtract(const Duration(days: 2)): [
-        'Test AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-        'Test B'
-      ],
-      DateTime.now(): ['Test C', 'Test D', 'Test E', 'Test F'],
-    };
-  }
-
-  @override
 
   // 曜日色設定
-  Widget build(BuildContext context) {
-    // 曜日の色設定
-    Color _textColor(DateTime day) {
-      const defaultTextColor = Colors.black87;
-
-      if (day.weekday == DateTime.sunday) {
-        return Colors.red; //日曜は赤色
-      }
-      if (day.weekday == DateTime.saturday) {
-        return Colors.blue[600]!; //土曜は青色
-      }
-      return defaultTextColor;
-    }
-
-    // イベント設定
-    final events = LinkedHashMap<DateTime, List>(
-      equals: isSameDay,
-      hashCode: getHashCode,
-    )..addAll(_eventsList);
-
-    List getEvent(DateTime day) {
-      return events[day] ?? [];
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final state = ref.watch(EventStateNotifierProvider);
+    final schedule = ref.watch(SelectNotifierProvider);
+    // EventData event;
+    final testselect = schedule.selectday;
+    final testfocused = schedule.focused;
 
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text(widget.title)),
+          title: const Center(child: Text('カレンダー')),
         ),
         body: Column(children: [
           TableCalendar(
-            calendarFormat: _calendarFormat,
-            onFormatChanged: (format) {
-              setState(() {
-                _calendarFormat = format;
-              });
-            },
             calendarStyle: const CalendarStyle(
               todayDecoration:
                   BoxDecoration(color: Colors.white, shape: BoxShape.circle),
@@ -149,11 +89,8 @@ class _ScheduleState extends State<Schedule> {
                   elevation: 0,
                 ),
                 onPressed: () {
-                  setState(() {
-                    _selected = getDate;
-                    _focused = getDate;
-                    selectedDate = getDate;
-                  });
+                  focused = getDate;
+                  selected = getDate;
                 },
                 child: const Text('今日', style: TextStyle(fontSize: 10)),
               ),
@@ -171,18 +108,17 @@ class _ScheduleState extends State<Schedule> {
             lastDay: DateTime(DateTime.now().year + 2), // 最新日付
 
             startingDayOfWeek: StartingDayOfWeek.monday,
-            eventLoader: getEvent, //追記
+            // eventLoader: getEvent, //追記
             selectedDayPredicate: (day) {
-              return isSameDay(_selected, day);
+              return isSameDay(selected, day);
             },
             // 日付選択
             onDaySelected: (selected, focused) {
-              if (!isSameDay(_selected, selected)) {
-                setState(() {
-                  _selected = selected;
-                  _focused = focused;
-                });
-              }
+              schedule.selectDate(selected);
+              focused = testfocused;
+              selected = testselect;
+              print(focused);
+              print(selected);
 
               showDialog(
                 context: context,
@@ -214,17 +150,15 @@ class _ScheduleState extends State<Schedule> {
                                           Text(
                                             '${DateFormat('yyyy/MM/dd').format(targetMonthDateList[index])}  (${DateFormat.E('ja').format(targetMonthDateList[index])})',
                                             style: TextStyle(
-                                              color: _textColor(
+                                              color: textColor(
                                                   targetMonthDateList[index]),
                                             ),
                                           ),
                                           IconButton(
                                               onPressed: () {
-                                                // （1） 指定した画面に遷移する
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
-                                                        // （2） 実際に表示するページ(ウィジェット)を指定する
                                                         builder: (context) =>
                                                             const EventPage()));
                                               },
@@ -239,6 +173,8 @@ class _ScheduleState extends State<Schedule> {
                                           height: MediaQuery.of(context)
                                               .size
                                               .height,
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           child: SimpleDialogOption(
                                             onPressed: () {},
                                             child: const Text("・First Item"),
@@ -255,14 +191,14 @@ class _ScheduleState extends State<Schedule> {
                 },
               );
             },
-            focusedDay: _focused,
+            focusedDay: focused,
             calendarBuilders: CalendarBuilders(
               headerTitleBuilder: (context, day) {
                 return TextButton(
                   onPressed: () {
-                    _pickDate(context);
-                    _selected = day;
-                    _focused = day;
+                    schedule.pickDate(context);
+                    selected = day;
+                    focused = day;
                   },
                   child: SizedBox(
                     width: 100,
@@ -270,7 +206,7 @@ class _ScheduleState extends State<Schedule> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '${selectedDate!.year}年${selectedDate!.month}月 ',
+                          '${selectedDate.year}年${selectedDate.month}月 ',
                           style: const TextStyle(color: Colors.black),
                         ),
                         const Icon(
@@ -305,15 +241,13 @@ class _ScheduleState extends State<Schedule> {
               },
               defaultBuilder:
                   (BuildContext context, DateTime day, DateTime focusedDay) {
-                scheduleDate = day;
-
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 250),
                   alignment: Alignment.center,
                   child: Text(
                     day.day.toString(),
                     style: TextStyle(
-                      color: _textColor(day),
+                      color: textColor(day),
                     ),
                   ),
                 );

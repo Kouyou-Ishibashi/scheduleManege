@@ -9,7 +9,6 @@ part of 'datebase.dart';
 // ignore_for_file: type=lint
 class EventData extends DataClass implements Insertable<EventData> {
   final int id;
-  final String userId;
   final DateTime scheduleDate;
   final DateTime? startTime;
   final DateTime? endTime;
@@ -19,7 +18,6 @@ class EventData extends DataClass implements Insertable<EventData> {
   final DateTime? editDate;
   EventData(
       {required this.id,
-      required this.userId,
       required this.scheduleDate,
       this.startTime,
       this.endTime,
@@ -32,8 +30,6 @@ class EventData extends DataClass implements Insertable<EventData> {
     return EventData(
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      userId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
       scheduleDate: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}schedule_date'])!,
       startTime: const DateTimeType()
@@ -54,7 +50,6 @@ class EventData extends DataClass implements Insertable<EventData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['user_id'] = Variable<String>(userId);
     map['schedule_date'] = Variable<DateTime>(scheduleDate);
     if (!nullToAbsent || startTime != null) {
       map['start_time'] = Variable<DateTime?>(startTime);
@@ -76,7 +71,6 @@ class EventData extends DataClass implements Insertable<EventData> {
   EventCompanion toCompanion(bool nullToAbsent) {
     return EventCompanion(
       id: Value(id),
-      userId: Value(userId),
       scheduleDate: Value(scheduleDate),
       startTime: startTime == null && nullToAbsent
           ? const Value.absent()
@@ -100,7 +94,6 @@ class EventData extends DataClass implements Insertable<EventData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return EventData(
       id: serializer.fromJson<int>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
       scheduleDate: serializer.fromJson<DateTime>(json['scheduleDate']),
       startTime: serializer.fromJson<DateTime?>(json['startTime']),
       endTime: serializer.fromJson<DateTime?>(json['endTime']),
@@ -115,7 +108,6 @@ class EventData extends DataClass implements Insertable<EventData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'userId': serializer.toJson<String>(userId),
       'scheduleDate': serializer.toJson<DateTime>(scheduleDate),
       'startTime': serializer.toJson<DateTime?>(startTime),
       'endTime': serializer.toJson<DateTime?>(endTime),
@@ -128,7 +120,6 @@ class EventData extends DataClass implements Insertable<EventData> {
 
   EventData copyWith(
           {int? id,
-          String? userId,
           DateTime? scheduleDate,
           DateTime? startTime,
           DateTime? endTime,
@@ -138,7 +129,6 @@ class EventData extends DataClass implements Insertable<EventData> {
           DateTime? editDate}) =>
       EventData(
         id: id ?? this.id,
-        userId: userId ?? this.userId,
         scheduleDate: scheduleDate ?? this.scheduleDate,
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
@@ -151,7 +141,6 @@ class EventData extends DataClass implements Insertable<EventData> {
   String toString() {
     return (StringBuffer('EventData(')
           ..write('id: $id, ')
-          ..write('userId: $userId, ')
           ..write('scheduleDate: $scheduleDate, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
@@ -164,14 +153,13 @@ class EventData extends DataClass implements Insertable<EventData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, userId, scheduleDate, startTime, endTime,
+  int get hashCode => Object.hash(id, scheduleDate, startTime, endTime,
       eventFlg, scheduleMemo, createDate, editDate);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is EventData &&
           other.id == this.id &&
-          other.userId == this.userId &&
           other.scheduleDate == this.scheduleDate &&
           other.startTime == this.startTime &&
           other.endTime == this.endTime &&
@@ -183,7 +171,6 @@ class EventData extends DataClass implements Insertable<EventData> {
 
 class EventCompanion extends UpdateCompanion<EventData> {
   final Value<int> id;
-  final Value<String> userId;
   final Value<DateTime> scheduleDate;
   final Value<DateTime?> startTime;
   final Value<DateTime?> endTime;
@@ -193,7 +180,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
   final Value<DateTime?> editDate;
   const EventCompanion({
     this.id = const Value.absent(),
-    this.userId = const Value.absent(),
     this.scheduleDate = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
@@ -204,7 +190,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
   });
   EventCompanion.insert({
     this.id = const Value.absent(),
-    required String userId,
     required DateTime scheduleDate,
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
@@ -212,13 +197,11 @@ class EventCompanion extends UpdateCompanion<EventData> {
     this.scheduleMemo = const Value.absent(),
     required DateTime createDate,
     this.editDate = const Value.absent(),
-  })  : userId = Value(userId),
-        scheduleDate = Value(scheduleDate),
+  })  : scheduleDate = Value(scheduleDate),
         eventFlg = Value(eventFlg),
         createDate = Value(createDate);
   static Insertable<EventData> custom({
     Expression<int>? id,
-    Expression<String>? userId,
     Expression<DateTime>? scheduleDate,
     Expression<DateTime?>? startTime,
     Expression<DateTime?>? endTime,
@@ -229,7 +212,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
       if (scheduleDate != null) 'schedule_date': scheduleDate,
       if (startTime != null) 'start_time': startTime,
       if (endTime != null) 'end_time': endTime,
@@ -242,7 +224,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
 
   EventCompanion copyWith(
       {Value<int>? id,
-      Value<String>? userId,
       Value<DateTime>? scheduleDate,
       Value<DateTime?>? startTime,
       Value<DateTime?>? endTime,
@@ -252,7 +233,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
       Value<DateTime?>? editDate}) {
     return EventCompanion(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
       scheduleDate: scheduleDate ?? this.scheduleDate,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
@@ -268,9 +248,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
     }
     if (scheduleDate.present) {
       map['schedule_date'] = Variable<DateTime>(scheduleDate.value);
@@ -300,7 +277,6 @@ class EventCompanion extends UpdateCompanion<EventData> {
   String toString() {
     return (StringBuffer('EventCompanion(')
           ..write('id: $id, ')
-          ..write('userId: $userId, ')
           ..write('scheduleDate: $scheduleDate, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
@@ -325,11 +301,6 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
       type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
-  final VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String?> userId = GeneratedColumn<String?>(
-      'user_id', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _scheduleDateMeta =
       const VerificationMeta('scheduleDate');
   @override
@@ -373,7 +344,6 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        userId,
         scheduleDate,
         startTime,
         endTime,
@@ -393,12 +363,6 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
-    } else if (isInserting) {
-      context.missing(_userIdMeta);
     }
     if (data.containsKey('schedule_date')) {
       context.handle(
