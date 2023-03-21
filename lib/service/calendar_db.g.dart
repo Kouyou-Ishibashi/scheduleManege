@@ -1,37 +1,39 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'datebase.dart';
+part of 'calendar_db.dart';
 
 // **************************************************************************
 // MoorGenerator
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class EventData extends DataClass implements Insertable<EventData> {
+class CalendarItemData extends DataClass
+    implements Insertable<CalendarItemData> {
   final int id;
-  final DateTime scheduleDate;
+  final DateTime? scheduleDate;
   final DateTime? startTime;
   final DateTime? endTime;
   final String eventFlg;
   final String? scheduleMemo;
-  final DateTime createDate;
+  final DateTime? createDate;
   final DateTime? editDate;
-  EventData(
+  CalendarItemData(
       {required this.id,
-      required this.scheduleDate,
+      this.scheduleDate,
       this.startTime,
       this.endTime,
       required this.eventFlg,
       this.scheduleMemo,
-      required this.createDate,
+      this.createDate,
       this.editDate});
-  factory EventData.fromData(Map<String, dynamic> data, {String? prefix}) {
+  factory CalendarItemData.fromData(Map<String, dynamic> data,
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    return EventData(
+    return CalendarItemData(
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       scheduleDate: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}schedule_date'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}schedule_date']),
       startTime: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
       endTime: const DateTimeType()
@@ -41,7 +43,7 @@ class EventData extends DataClass implements Insertable<EventData> {
       scheduleMemo: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}schedule_memo']),
       createDate: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}create_date'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}create_date']),
       editDate: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}edit_date']),
     );
@@ -50,7 +52,9 @@ class EventData extends DataClass implements Insertable<EventData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['schedule_date'] = Variable<DateTime>(scheduleDate);
+    if (!nullToAbsent || scheduleDate != null) {
+      map['schedule_date'] = Variable<DateTime?>(scheduleDate);
+    }
     if (!nullToAbsent || startTime != null) {
       map['start_time'] = Variable<DateTime?>(startTime);
     }
@@ -61,17 +65,21 @@ class EventData extends DataClass implements Insertable<EventData> {
     if (!nullToAbsent || scheduleMemo != null) {
       map['schedule_memo'] = Variable<String?>(scheduleMemo);
     }
-    map['create_date'] = Variable<DateTime>(createDate);
+    if (!nullToAbsent || createDate != null) {
+      map['create_date'] = Variable<DateTime?>(createDate);
+    }
     if (!nullToAbsent || editDate != null) {
       map['edit_date'] = Variable<DateTime?>(editDate);
     }
     return map;
   }
 
-  EventCompanion toCompanion(bool nullToAbsent) {
-    return EventCompanion(
+  CalendarItemCompanion toCompanion(bool nullToAbsent) {
+    return CalendarItemCompanion(
       id: Value(id),
-      scheduleDate: Value(scheduleDate),
+      scheduleDate: scheduleDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(scheduleDate),
       startTime: startTime == null && nullToAbsent
           ? const Value.absent()
           : Value(startTime),
@@ -82,24 +90,26 @@ class EventData extends DataClass implements Insertable<EventData> {
       scheduleMemo: scheduleMemo == null && nullToAbsent
           ? const Value.absent()
           : Value(scheduleMemo),
-      createDate: Value(createDate),
+      createDate: createDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createDate),
       editDate: editDate == null && nullToAbsent
           ? const Value.absent()
           : Value(editDate),
     );
   }
 
-  factory EventData.fromJson(Map<String, dynamic> json,
+  factory CalendarItemData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return EventData(
+    return CalendarItemData(
       id: serializer.fromJson<int>(json['id']),
-      scheduleDate: serializer.fromJson<DateTime>(json['scheduleDate']),
+      scheduleDate: serializer.fromJson<DateTime?>(json['scheduleDate']),
       startTime: serializer.fromJson<DateTime?>(json['startTime']),
       endTime: serializer.fromJson<DateTime?>(json['endTime']),
       eventFlg: serializer.fromJson<String>(json['eventFlg']),
       scheduleMemo: serializer.fromJson<String?>(json['scheduleMemo']),
-      createDate: serializer.fromJson<DateTime>(json['createDate']),
+      createDate: serializer.fromJson<DateTime?>(json['createDate']),
       editDate: serializer.fromJson<DateTime?>(json['editDate']),
     );
   }
@@ -108,17 +118,17 @@ class EventData extends DataClass implements Insertable<EventData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'scheduleDate': serializer.toJson<DateTime>(scheduleDate),
+      'scheduleDate': serializer.toJson<DateTime?>(scheduleDate),
       'startTime': serializer.toJson<DateTime?>(startTime),
       'endTime': serializer.toJson<DateTime?>(endTime),
       'eventFlg': serializer.toJson<String>(eventFlg),
       'scheduleMemo': serializer.toJson<String?>(scheduleMemo),
-      'createDate': serializer.toJson<DateTime>(createDate),
+      'createDate': serializer.toJson<DateTime?>(createDate),
       'editDate': serializer.toJson<DateTime?>(editDate),
     };
   }
 
-  EventData copyWith(
+  CalendarItemData copyWith(
           {int? id,
           DateTime? scheduleDate,
           DateTime? startTime,
@@ -127,7 +137,7 @@ class EventData extends DataClass implements Insertable<EventData> {
           String? scheduleMemo,
           DateTime? createDate,
           DateTime? editDate}) =>
-      EventData(
+      CalendarItemData(
         id: id ?? this.id,
         scheduleDate: scheduleDate ?? this.scheduleDate,
         startTime: startTime ?? this.startTime,
@@ -139,7 +149,7 @@ class EventData extends DataClass implements Insertable<EventData> {
       );
   @override
   String toString() {
-    return (StringBuffer('EventData(')
+    return (StringBuffer('CalendarItemData(')
           ..write('id: $id, ')
           ..write('scheduleDate: $scheduleDate, ')
           ..write('startTime: $startTime, ')
@@ -158,7 +168,7 @@ class EventData extends DataClass implements Insertable<EventData> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is EventData &&
+      (other is CalendarItemData &&
           other.id == this.id &&
           other.scheduleDate == this.scheduleDate &&
           other.startTime == this.startTime &&
@@ -169,16 +179,16 @@ class EventData extends DataClass implements Insertable<EventData> {
           other.editDate == this.editDate);
 }
 
-class EventCompanion extends UpdateCompanion<EventData> {
+class CalendarItemCompanion extends UpdateCompanion<CalendarItemData> {
   final Value<int> id;
-  final Value<DateTime> scheduleDate;
+  final Value<DateTime?> scheduleDate;
   final Value<DateTime?> startTime;
   final Value<DateTime?> endTime;
   final Value<String> eventFlg;
   final Value<String?> scheduleMemo;
-  final Value<DateTime> createDate;
+  final Value<DateTime?> createDate;
   final Value<DateTime?> editDate;
-  const EventCompanion({
+  const CalendarItemCompanion({
     this.id = const Value.absent(),
     this.scheduleDate = const Value.absent(),
     this.startTime = const Value.absent(),
@@ -188,26 +198,24 @@ class EventCompanion extends UpdateCompanion<EventData> {
     this.createDate = const Value.absent(),
     this.editDate = const Value.absent(),
   });
-  EventCompanion.insert({
+  CalendarItemCompanion.insert({
     this.id = const Value.absent(),
-    required DateTime scheduleDate,
+    this.scheduleDate = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
     required String eventFlg,
     this.scheduleMemo = const Value.absent(),
-    required DateTime createDate,
+    this.createDate = const Value.absent(),
     this.editDate = const Value.absent(),
-  })  : scheduleDate = Value(scheduleDate),
-        eventFlg = Value(eventFlg),
-        createDate = Value(createDate);
-  static Insertable<EventData> custom({
+  }) : eventFlg = Value(eventFlg);
+  static Insertable<CalendarItemData> custom({
     Expression<int>? id,
-    Expression<DateTime>? scheduleDate,
+    Expression<DateTime?>? scheduleDate,
     Expression<DateTime?>? startTime,
     Expression<DateTime?>? endTime,
     Expression<String>? eventFlg,
     Expression<String?>? scheduleMemo,
-    Expression<DateTime>? createDate,
+    Expression<DateTime?>? createDate,
     Expression<DateTime?>? editDate,
   }) {
     return RawValuesInsertable({
@@ -222,16 +230,16 @@ class EventCompanion extends UpdateCompanion<EventData> {
     });
   }
 
-  EventCompanion copyWith(
+  CalendarItemCompanion copyWith(
       {Value<int>? id,
-      Value<DateTime>? scheduleDate,
+      Value<DateTime?>? scheduleDate,
       Value<DateTime?>? startTime,
       Value<DateTime?>? endTime,
       Value<String>? eventFlg,
       Value<String?>? scheduleMemo,
-      Value<DateTime>? createDate,
+      Value<DateTime?>? createDate,
       Value<DateTime?>? editDate}) {
-    return EventCompanion(
+    return CalendarItemCompanion(
       id: id ?? this.id,
       scheduleDate: scheduleDate ?? this.scheduleDate,
       startTime: startTime ?? this.startTime,
@@ -250,7 +258,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
       map['id'] = Variable<int>(id.value);
     }
     if (scheduleDate.present) {
-      map['schedule_date'] = Variable<DateTime>(scheduleDate.value);
+      map['schedule_date'] = Variable<DateTime?>(scheduleDate.value);
     }
     if (startTime.present) {
       map['start_time'] = Variable<DateTime?>(startTime.value);
@@ -265,7 +273,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
       map['schedule_memo'] = Variable<String?>(scheduleMemo.value);
     }
     if (createDate.present) {
-      map['create_date'] = Variable<DateTime>(createDate.value);
+      map['create_date'] = Variable<DateTime?>(createDate.value);
     }
     if (editDate.present) {
       map['edit_date'] = Variable<DateTime?>(editDate.value);
@@ -275,7 +283,7 @@ class EventCompanion extends UpdateCompanion<EventData> {
 
   @override
   String toString() {
-    return (StringBuffer('EventCompanion(')
+    return (StringBuffer('CalendarItemCompanion(')
           ..write('id: $id, ')
           ..write('scheduleDate: $scheduleDate, ')
           ..write('startTime: $startTime, ')
@@ -289,11 +297,12 @@ class EventCompanion extends UpdateCompanion<EventData> {
   }
 }
 
-class $EventTable extends Event with TableInfo<$EventTable, EventData> {
+class $CalendarItemTable extends CalendarItem
+    with TableInfo<$CalendarItemTable, CalendarItemData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $EventTable(this.attachedDatabase, [this._alias]);
+  $CalendarItemTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
@@ -305,8 +314,8 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
       const VerificationMeta('scheduleDate');
   @override
   late final GeneratedColumn<DateTime?> scheduleDate =
-      GeneratedColumn<DateTime?>('schedule_date', aliasedName, false,
-          type: const IntType(), requiredDuringInsert: true);
+      GeneratedColumn<DateTime?>('schedule_date', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _startTimeMeta = const VerificationMeta('startTime');
   @override
   late final GeneratedColumn<DateTime?> startTime = GeneratedColumn<DateTime?>(
@@ -334,8 +343,8 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
   final VerificationMeta _createDateMeta = const VerificationMeta('createDate');
   @override
   late final GeneratedColumn<DateTime?> createDate = GeneratedColumn<DateTime?>(
-      'create_date', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      'create_date', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _editDateMeta = const VerificationMeta('editDate');
   @override
   late final GeneratedColumn<DateTime?> editDate = GeneratedColumn<DateTime?>(
@@ -353,11 +362,11 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
         editDate
       ];
   @override
-  String get aliasedName => _alias ?? 'event';
+  String get aliasedName => _alias ?? 'calendar_item';
   @override
-  String get actualTableName => 'event';
+  String get actualTableName => 'calendar_item';
   @override
-  VerificationContext validateIntegrity(Insertable<EventData> instance,
+  VerificationContext validateIntegrity(Insertable<CalendarItemData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -369,8 +378,6 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
           _scheduleDateMeta,
           scheduleDate.isAcceptableOrUnknown(
               data['schedule_date']!, _scheduleDateMeta));
-    } else if (isInserting) {
-      context.missing(_scheduleDateMeta);
     }
     if (data.containsKey('start_time')) {
       context.handle(_startTimeMeta,
@@ -397,8 +404,6 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
           _createDateMeta,
           createDate.isAcceptableOrUnknown(
               data['create_date']!, _createDateMeta));
-    } else if (isInserting) {
-      context.missing(_createDateMeta);
     }
     if (data.containsKey('edit_date')) {
       context.handle(_editDateMeta,
@@ -410,22 +415,22 @@ class $EventTable extends Event with TableInfo<$EventTable, EventData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  EventData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return EventData.fromData(data,
+  CalendarItemData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return CalendarItemData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
-  $EventTable createAlias(String alias) {
-    return $EventTable(attachedDatabase, alias);
+  $CalendarItemTable createAlias(String alias) {
+    return $CalendarItemTable(attachedDatabase, alias);
   }
 }
 
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  late final $EventTable event = $EventTable(this);
+  late final $CalendarItemTable calendarItem = $CalendarItemTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [event];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [calendarItem];
 }
