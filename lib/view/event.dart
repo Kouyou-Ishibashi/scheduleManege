@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_task8/repository/calendar_provider.dart';
 
-class EventPage extends StatefulWidget {
+final eventProvider =
+    ChangeNotifierProvider.autoDispose((ref) => EventProvider());
+
+class EventPage extends ConsumerWidget {
   const EventPage({
     Key? key,
+    required this.date,
   }) : super(key: key);
 
-  @override
-  State<EventPage> createState() => _EventPageState();
-}
+  final DateTime date;
 
-class _EventPageState extends State<EventPage> {
-  var _selectDate = DateTime.now();
-
-  bool isOn = false;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allDay = ref.watch(eventProvider);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 237, 237, 237), //色
       appBar: AppBar(
@@ -65,11 +66,7 @@ class _EventPageState extends State<EventPage> {
                       trailing: Switch(
                         value: isOn,
                         onChanged: (value) {
-                          setState(
-                            () {
-                              isOn = value;
-                            },
-                          );
+                          allDay.allDayAction(value);
                         },
                       ),
                     )),
@@ -78,15 +75,13 @@ class _EventPageState extends State<EventPage> {
                   child: ListTile(
                     title: const Text('開始'),
                     trailing:
-                        isOn == true ? null : const Text('2023-02-17 11:00'),
+                        isOn == true ? null : const Text('2023-03-01 11:00'),
                     onTap: () {
                       CupertinoDatePicker(
                         use24hFormat: true,
-                        initialDateTime: _selectDate,
+                        initialDateTime: eventDate,
                         onDateTimeChanged: (newDate) {
-                          setState(() {
-                            _selectDate = newDate;
-                          });
+                          allDay.eventDayAction(newDate);
                         },
                       );
                     },

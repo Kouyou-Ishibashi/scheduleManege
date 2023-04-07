@@ -102,7 +102,7 @@
 //                         scrollDirection: Axis.horizontal,
 //                         physics: const NeverScrollableScrollPhysics(),
 //                         itemBuilder: (BuildContext context, int index) {
-//                           return SimpleDialog(
+//                           return AlertDialog(
 //                             insetPadding:
 //                                 const EdgeInsets.only(right: 10, left: 10),
 //                             shape: const RoundedRectangleBorder(
@@ -113,10 +113,10 @@
 //                               children: [
 //                                 Text(
 //                                   '${DateFormat('yyyy/MM/dd').format(targetMonthDateList[index])}  (${DateFormat.E('ja').format(targetMonthDateList[index])})',
-//                                   style: TextStyle(
-//                                     color:
-//                                         ColorStyle(targetMonthDateList[index]),
-//                                   ),
+//                                   // style: TextStyle(
+//                                   //   color:
+//                                   //       ColorStyle(targetMonthDateList[index]),
+//                                   // ),
 //                                 ),
 //                                 IconButton(
 //                                     onPressed: () {
@@ -134,15 +134,15 @@
 //                                     )),
 //                               ],
 //                             ),
-//                             children: <Widget>[
-//                               SizedBox(
-//                                 height: MediaQuery.of(context).size.height,
-//                                 child: SimpleDialogOption(
-//                                   onPressed: () {},
-//                                   child: const Text("・First Item"),
-//                                 ),
-//                               )
-//                             ],
+//                             // children: <Widget>[
+//                             //   SizedBox(
+//                             //     height: MediaQuery.of(context).size.height,
+//                             //     child: SimpleDialogOption(
+//                             //       onPressed: () {},
+//                             //       child: const Text("・First Item"),
+//                             //     ),
+//                             //   )
+//                             // ],
 //                           );
 //                         },
 //                         itemCount: targetMonthDateList.length,

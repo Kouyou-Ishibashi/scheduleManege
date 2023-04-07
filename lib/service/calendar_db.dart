@@ -31,19 +31,27 @@ class MyDatabase extends _$MyDatabase {
   Future<List<CalendarItemData>> readAllCalendarItemData() =>
       select(calendarItem).get();
 
-  // //追加
+  //追加
   Future writeCalendar(CalendarItemData data) =>
       into(calendarItem).insert(data);
 
-  // //更新
+  //更新
   Future updateCalendar(CalendarItemData data) =>
       update(calendarItem).replace(data);
 
-  // //削除
+  //削除
   Future deleteCalendar(int id) =>
       (delete(calendarItem)..where((it) => it.id.equals(id))).go();
 
   static getInstance() {}
+
+// 追加案
+  Stream<List<CalendarItemData>> watchEntries() {
+    return (select(calendarItem)).watch();
+  }
+
+  Future<List<CalendarItemData>> get allTodoEntries =>
+      select(calendarItem).get();
 }
 
 LazyDatabase _openConnection() {
